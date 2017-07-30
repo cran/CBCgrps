@@ -1,0 +1,5 @@
+importFrom(stats, chisq.test, fisher.test, t.test,
+             wilcox.test)
+importFrom(nortest, ad.test)
+
+export(cbcgrps)
