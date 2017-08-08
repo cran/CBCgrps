@@ -1,12 +1,17 @@
-cbcgrps <-
-function(df,gvar,
+cbcgrps<-function(df,gvar,
     p.rd=3,
     norm.rd=2,
     sk.rd=2,
-    tabNA="no",cat.rd=2,
+    tabNA="no",#need to replace NaN with NA for all factors
+    cat.rd=2,
     maxfactorlevels=30,
     minfactorlevels=10,
+    fisher.flg="yes",#to escape fisher test for save workspace
     workspace=2e5){
+##group varibale must be a factor
+df[,gvar]<-as.factor(df[,gvar])
+#NaN is forced to be NA, NaN can cause problem
+df<-replace(df,is.na(df),NA)
 g1<-levels(df[,gvar])[1]
 g2<-levels(df[,gvar])[2]
 varlist<-names(df)[!names(df)%in%gvar]      	
@@ -39,12 +44,15 @@ length(levels(factor(df[,var])))>maxfactorlevels)
 	per<-prop.table(table)
 	table.sub<-table(df[,var],df[,gvar],useNA=tabNA)
 	per.sub<-prop.table(table.sub,2)
-	p<-tryCatch({
+	if(fisher.flg=="yes"){
+	p<-tryCatch({#using fisher's test when scarce data
           chisq.test(table.sub)$p.value
        }, warning = function(w) {
           fisher.test(table.sub,
           workspace = workspace)$p.value
-       })
+       })}else{
+       	p=chisq.test(table.sub)$p.value
+       }
 	frame<-data.frame(No.tot=as.data.frame(table)[,"Freq"],
 	     per.tot=round(as.data.frame(per)[,"Freq"],cat.rd),
 	     No.1=as.data.frame.matrix(table.sub)[,g1],
@@ -128,5 +136,6 @@ results<-list(table=table,
   table.cat=table.cat,
   table.norm=table.norm,
   table.skew=table.skew)
-return(results)       	      	    	
+return(results)       	      	
+#the end of the function      	
    }
