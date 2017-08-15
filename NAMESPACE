@@ -1,5 +1,5 @@
 importFrom(stats, chisq.test, fisher.test, t.test,
-             wilcox.test)
+             wilcox.test, aov, kruskal.test, setNames)
 importFrom(nortest, ad.test)
 
-export(cbcgrps)
+export(twogrps,multigrps)

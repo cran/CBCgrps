@@ -1,5 +1,7 @@
-cbcgrps<-function(df,gvar,
+twogrps <-
+function(df,gvar,
     p.rd=3,
+    normtest='yes',
     norm.rd=2,
     sk.rd=2,
     tabNA="no",#need to replace NaN with NA for all factors
@@ -63,7 +65,7 @@ length(levels(factor(df[,var])))>maxfactorlevels)
 	rownames(frame)<-paste(var,levels(df[,var]),sep="_")
 	table.cat<-rbind(table.cat,frame)
  }else{
- 	if(ad.test(df[,var])$p.value>=0.05){
+ 	if(ad.test(df[,var])$p.value>=0.05|normtest=="no"){
      mean<-round(mean(df[,var],na.rm=T),norm.rd)
 	 sd<-round(sd(df[,var],na.rm=T),norm.rd)
 	 mean.1<-round(mean(df[df[,gvar]==g1,var],na.rm=T),norm.rd)
