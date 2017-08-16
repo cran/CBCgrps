@@ -8,7 +8,7 @@ function(df,gvar,
     cat.rd=2,
     maxfactorlevels=30,
     minfactorlevels=10,
-    fisher.flg="yes",#to escape fisher test for save workspace
+    sim=FALSE,
     workspace=2e5){
 ##group varibale must be a factor
 df[,gvar]<-as.factor(df[,gvar])
@@ -61,16 +61,15 @@ length(levels(factor(df[,var])))>maxfactorlevels)
 	per<-prop.table(table)
 	table.sub<-table(df[,var],df[,gvar],useNA=tabNA)
 	per.sub<-prop.table(table.sub,2)
-	if(fisher.flg=="yes"){
+
 	p<-tryCatch({#using fisher's test when scarce data
           chisq.test(table.sub)$p.value
        }, warning = function(w) {
           fisher.test(table.sub,
-          workspace = workspace)$p.value
-       })}else{
-       	p=chisq.test(table.sub)$p.value
-       }
-	frame<-data.frame(No.tot=as.data.frame(table)[,"Freq"],
+          workspace = workspace,
+          simulate.p.value = sim)$p.value
+       })
+    frame<-data.frame(No.tot=as.data.frame(table)[,"Freq"],
 	     per.tot=round(as.data.frame(per)[,"Freq"],cat.rd))
 	for(i in 1:length(levels(df[,gvar]))){
 		assign(paste("No",i,sep="."),as.data.frame.matrix(table.sub)[,get(paste("g",i,sep=''))])

@@ -9,7 +9,7 @@ The main function of the CBCgrps package.
 \usage{
 multigrps(df, gvar, p.rd = 3, normtest = "yes", norm.rd = 2, 
 sk.rd = 2, tabNA = "no", cat.rd = 2, maxfactorlevels = 30, 
-minfactorlevels = 10, fisher.flg = "yes", workspace = 2e+05)
+minfactorlevels = 10, sim = FALSE, workspace = 2e+05)
 }
 \arguments{
   \item{df}{
@@ -42,8 +42,8 @@ The maximum levels for factor variables, the default is 30. The argument is used
   \item{minfactorlevels}{
 If a numeric variable has only several values, it is treated as categorical variable. The default value is 10.
 }
-  \item{fisher.flg}{
-The default is to switch on the Fisher's exact test by "yes". "no" to switch off the test to save worspace.
+  \item{sim}{
+a logical indicating whether to compute p-values by Monte Carlo simulation, in larger than 2 by 2 tables. The default is FALSE. 
 }
   \item{workspace}{
 If the fisher.test() fucntion requires more workspace, it can be defined here. The default is workspace euqals to 2e+05.
