@@ -8,7 +8,7 @@ The main function of the CBCgrps package.
 }
 \usage{
 multigrps(df, gvar, p.rd = 3, normtest = "yes", norm.rd = 2, 
-sk.rd = 2, tabNA = "no", cat.rd = 2, maxfactorlevels = 30, 
+sk.rd = 2, tabNA = "no", cat.rd = 0, maxfactorlevels = 30, 
 minfactorlevels = 10, sim = FALSE, workspace = 2e+05)
 }
 \arguments{

@@ -5,7 +5,7 @@ function(df,gvar,
     norm.rd=2,
     sk.rd=2,
     tabNA="no",#need to replace NaN with NA for all factors
-    cat.rd=2,
+    cat.rd=0,
     maxfactorlevels=30,
     minfactorlevels=10,
     sim = FALSE,#to use simulated p value
@@ -54,11 +54,11 @@ length(levels(factor(df[,var])))>maxfactorlevels)
           simulate.p.value = sim)$p.value
        })
        	frame<-data.frame(No.tot=as.data.frame(table)[,"Freq"],
-	     per.tot=round(as.data.frame(per)[,"Freq"],cat.rd),
+	     per.tot=round(as.data.frame(per)[,"Freq"]*100,cat.rd),
 	     No.1=as.data.frame.matrix(table.sub)[,g1],
-	     per.1=round(as.data.frame.matrix(per.sub)[,g1],cat.rd),
+	     per.1=round(as.data.frame.matrix(per.sub)[,g1]*100,cat.rd),
 	     No.2=as.data.frame.matrix(table.sub)[,g2],
-	     per.2=round(as.data.frame.matrix(per.sub)[,g2],cat.rd),
+	     per.2=round(as.data.frame.matrix(per.sub)[,g2]*100,cat.rd),
 	     p=round(p,p.rd))
 	rownames(frame)<-paste(var,levels(df[,var]),sep="_")
 	table.cat<-rbind(table.cat,frame)

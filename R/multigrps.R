@@ -5,7 +5,7 @@ function(df,gvar,
     norm.rd=2,
     sk.rd=2,
     tabNA="no",#need to replace NaN with NA for all factors
-    cat.rd=2,
+    cat.rd=0,
     maxfactorlevels=30,
     minfactorlevels=10,
     sim=FALSE,
@@ -73,7 +73,7 @@ length(levels(factor(df[,var])))>maxfactorlevels)
 	     per.tot=round(as.data.frame(per)[,"Freq"],cat.rd))
 	for(i in 1:length(levels(df[,gvar]))){
 		assign(paste("No",i,sep="."),as.data.frame.matrix(table.sub)[,get(paste("g",i,sep=''))])
-		assign(paste("per",i,sep="."),round(as.data.frame.matrix(per.sub)[,get(paste("g",i,sep=''))],cat.rd))
+		assign(paste("per",i,sep="."),round(as.data.frame.matrix(per.sub)[,get(paste("g",i,sep=''))]*100,cat.rd))
 		frame<-data.frame(frame,
 		   get(paste("No",i,sep=".")),
 		   get(paste("per",i,sep=".")))
