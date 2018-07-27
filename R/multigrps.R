@@ -70,7 +70,7 @@ length(levels(factor(df[,var])))>maxfactorlevels)
           simulate.p.value = sim)$p.value
        })
     frame<-data.frame(No.tot=as.data.frame(table)[,"Freq"],
-	     per.tot=round(as.data.frame(per)[,"Freq"],cat.rd))
+	     per.tot=round(as.data.frame(per)[,"Freq"]*100,cat.rd))
 	for(i in 1:length(levels(df[,gvar]))){
 		assign(paste("No",i,sep="."),as.data.frame.matrix(table.sub)[,get(paste("g",i,sep=''))])
 		assign(paste("per",i,sep="."),round(as.data.frame.matrix(per.sub)[,get(paste("g",i,sep=''))]*100,cat.rd))
