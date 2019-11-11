@@ -1,8 +1,8 @@
 Package: CBCgrps
 Type: Package
 Title: Compare Baseline Characteristics Between Groups
-Version: 2.3
-Date: 2018-07-27
+Version: 2.4
+Date: 2019-11-11
 Author: Zhongheng Zhang, 
     Sir Run-Run Shaw hospital, 
     Zhejiang university school of medicine
@@ -11,6 +11,6 @@ Depends: R (>= 3.2.0), nortest (>= 1.0-4)
 Description: Compare baseline characteristics between two or more groups. The variables being compared can be factor and numeric variables. The function will automatically judge the type and distribution of the variables, and make statistical description and bivariate analysis. 
 License: GPL-2
 NeedsCompilation: no
-Packaged: 2018-07-26 23:11:06 UTC; apple
+Packaged: 2019-11-11 03:27:55 UTC; zhang
 Repository: CRAN
-Date/Publication: 2018-07-27 08:20:02 UTC
+Date/Publication: 2019-11-11 05:10:02 UTC

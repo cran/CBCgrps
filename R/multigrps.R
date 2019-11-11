@@ -1,11 +1,11 @@
 multigrps <-
 function(df,gvar,
-    p.rd=3,
-    normtest='yes',
+    p.rd=3,varlist = NULL,
+    skewvar=NULL,
     norm.rd=2,
     sk.rd=2,
     tabNA="no",#need to replace NaN with NA for all factors
-    cat.rd=0,
+    cat.rd=0,pnormtest=0.05,
     maxfactorlevels=30,
     minfactorlevels=10,
     sim=FALSE,
@@ -17,7 +17,17 @@ df<-replace(df,is.na(df),NA)
 for(i in 1:length(levels(df[,gvar]))){
   assign(paste("g", i, sep = ""), levels(df[,gvar])[i])    
 }
-varlist<-names(df)[!names(df)%in%gvar]      	
+if(is.null(varlist)){
+  varlist<-names(df)[!names(df)%in%gvar] 
+}else if(sum(!(varlist%in%names(df)))>0){
+  stop("varlist contains variables not in the data frame")
+} else {
+  varlist = varlist
+}
+if(sum(!(skewvar%in%names(df)))>0){
+  stop("skewvar contains variables not in the data frame")
+}
+     	
 table.norm<-data.frame(matrix(rep(999,length(levels(df[,gvar]))*2+3),nrow=1))
 nor.names<-c("mean","sd")
 for(i in 1:length(levels(df[,gvar]))){
@@ -52,7 +62,10 @@ length(levels(factor(df[,var])))>maxfactorlevels)
      next }else{	
  if(class(df[,var])=="factor"|
  length(levels(factor(df[,var])))<=minfactorlevels){
-	if(tabNA=="no"){
+   if(var%in%skewvar){
+     stop("skewvar contains categorical variables")
+   }
+   if(tabNA=="no"){
 		df[,var]<-factor(df[,var])
 		}else{
 	 df[,var]<-factor(df[,var],exclude = NULL)
@@ -80,10 +93,10 @@ length(levels(factor(df[,var])))>maxfactorlevels)
 	}
 	frame<-data.frame(frame,p=round(p,p.rd))
 	colnames(frame)<-names(table.cat)	
-	rownames(frame)<-paste(var,levels(df[,var]),sep="_")
+	rownames(frame)<-paste(var,levels(df[,var]),sep="_.._")
 	table.cat<-rbind(table.cat,frame)
  }else{
- 	if(ad.test(df[,var])$p.value>=0.05|normtest=="no"){
+ 	if((ad.test(df[,var])$p.value>=pnormtest&is.null(skewvar))|(!(var%in%skewvar)&!is.null(skewvar))){
      mean<-round(mean(df[,var],na.rm=T),norm.rd)
 	 sd<-round(sd(df[,var],na.rm=T),norm.rd)
 	 output<-data.frame(mean,sd)
@@ -138,7 +151,9 @@ for(i in 1:length(levels(df[,gvar]))){
 	get(paste('grp',i,sep="")))
 }
 tm.names<-c(tm.names,"p")    
-tmsk<-cbind(tmsk,p=table.skew$p)
+tmsk<-cbind(tmsk,p=ifelse(table.skew$p<1*10^(-p.rd),
+                          paste("<",1*10^(-p.rd),sep = ""),
+                          table.skew$p))
 colnames(tmsk)<-tm.names
 rownames(tmsk)<-rownames(table.skew)
 #normal data
@@ -153,7 +168,9 @@ for(i in 1:length(levels(df[,gvar]))){
     tmnorm<-cbind(tmnorm,
 	get(paste('grp',i,sep="")))
 }
-tmnorm<-cbind(tmnorm,p=table.norm$p)
+tmnorm<-cbind(tmnorm,p=ifelse(table.norm$p<1*10^(-p.rd),
+                              paste("<",1*10^(-p.rd),sep = ""),
+                              table.norm$p))
 colnames(tmnorm)<-tm.names
 rownames(tmnorm)<-rownames(table.norm)
 #categorical data
@@ -168,18 +185,49 @@ for(i in 1:length(levels(df[,gvar]))){
     tmcat<-cbind(tmcat,
 	get(paste('grp',i,sep="")))
 }
-tmcat<-cbind(tmcat,p=table.cat$p)
+tmcat<-cbind(tmcat,p=ifelse(table.cat$p<1*10^(-p.rd),
+                            paste("<",1*10^(-p.rd),sep = ""),
+                            table.cat$p))
 colnames(tmcat)<-tm.names
 rownames(tmcat)<-rownames(table.cat)
 #combine all variable types  
 table<-rbind(tmnorm,tmsk,tmcat)
-colnames(table)<-NULL
-table<-rbind(tm.names,table)
 table<-table[!table[,length(levels(df[,gvar]))+2]=="999",]
+tabdup <- as.data.frame(apply(table,MARGIN = 2, as.character),
+                        stringsAsFactors = F)
+rownames(tabdup) <- rownames(table)
+tabdup[,"var"] <- gsub("_.._.*","",rownames(tabdup))
+tabAddhead <- NULL;
+for (var in varlist) {
+  tabsub <- tabdup[tabdup$var==var,]
+  if(nrow(tabsub)>1){
+    newline <- data.frame(matrix(c(rep("",length(levels(df[,gvar]))+1),
+                                   tabsub$p[1],tabsub$var[1]),nrow = 1),
+                          stringsAsFactors = F)
+    names(newline) <- names(tabsub)
+    rownames(newline) <- tabsub$var[1]
+    tab1line <- rbind.data.frame(newline,tabsub)
+    tab1line[2:(nrow(tabsub)+1),"p"] <- ""
+    rownames(tab1line)[2:(nrow(tabsub)+1)] <- sub(paste(var,"_.._",sep = ""),
+                                                  rownames(tab1line)[2:(nrow(tabsub)+1)],
+                                                  replacement = "    ")
+    tabAddhead <- rbind(tabAddhead,tab1line)
+  } else{
+    tabAddhead <- rbind(tabAddhead,tabsub)
+  }
+}
+tabAddhead <- tabAddhead[,-(length(levels(df[,gvar]))+3)]
+tabAddhead<-rbind(c(paste("Total (n=",nrow(df),")",sep = ""),
+                    paste(levels(df[,gvar]),"(n=",table(df[,gvar]),")",sep = ""),
+                    "p"),
+                  tabAddhead)
+rownames(tabAddhead)[1] <- "Variables"
+colnames(tabAddhead)<-NULL
+#combine all results for return
 table.norm<-table.norm[-1,]
 table.skew<-table.skew[-1,]
 table.cat<-table.cat[-1,]
-results<-list(table=table,
+results<-list(table=tabAddhead,
   table.cat=table.cat,
   table.norm=table.norm,
   table.skew=table.skew)

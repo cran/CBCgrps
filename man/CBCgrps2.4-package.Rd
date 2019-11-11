@@ -1,4 +1,4 @@
-\name{CBCgrps2.0-package}
+\name{CBCgrps2.4-package}
 \alias{CBCgrps}
 \docType{package}
 \title{
