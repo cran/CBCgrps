@@ -11,7 +11,8 @@ multigrps(df, gvar, p.rd = 3, varlist = NULL,
     skewvar=NULL, norm.rd = 2, 
     sk.rd = 2, tabNA = "no", cat.rd = 0, pnormtest = 0.05,
     maxfactorlevels = 30, 
-    minfactorlevels = 10, sim = FALSE, workspace = 2e+05)
+    minfactorlevels = 10, sim = FALSE, workspace = 2e+05,
+    ShowStatistic = F)
 }
 \arguments{
   \item{df}{
@@ -56,6 +57,9 @@ a logical indicating whether to compute p-values by Monte Carlo simulation, in l
   \item{workspace}{
 If the fisher.test() fucntion requires more workspace, it can be defined here. The default is workspace euqals to 2e+05.
 }
+\item{ShowStatistic}{
+logic value for whether showing statistics or not. The defaule is FALSE for not showing statistics. Statistics is used for statistical inference such as F value for Chi-square test and T value for student t test.   
+}
 }
 \details{
 The function compares differences in categorical and continuous variables between three or more groups. The function automatically judges the distribution of the continuous variable and use appropriate description for them. Chi-square test is used for categorical data. Analysis of variance is used for normally distributed numeric data. Kruskal-Wallis rank sum test is used for non-normally distributed data. 
@@ -63,12 +67,7 @@ It is common that some categorical variables contain numeric or integer values. 
 For some large dataset, the normality test is extremely sensitive that a small deviation from normal distribution will lead to the rejection of the null hypothesis of normality. In such a circumstance, users may opt to switch off the normality test by explicitly specify the skewed data (i.e. skewvar=some variables names) or set a smaller p value for normal test (i.e. pnormtest=0.0001).
 }
 \value{
-\item{table }{The table with string values. The mean and standard error are put in a single cell, and connected by plus and minus symbol.}
- \item{table.norm }{The table contains only normally distributed numeric variables. Mean and standard deviation are put in separate cells}
- \item{table.skew }{The table contains only skewed numeric variables. Median and interquartile range are put in separate cells}
- \item{table.cat }{The table contains only factor variables. Number and proportion are put in separate cells}
- \item{g1 }{level of group 1}
- \item{g2 }{level of group 2}
+\item{Table }{The table with string values. The mean and standard error are put in a single cell, and connected by plus and minus symbol.}
 }
 \references{
 Myles Hollander and Douglas A. Wolfe (1973), Nonparametric Statistical Methods. New York: John Wiley&Sons. Pages 115-120.
@@ -91,7 +90,7 @@ No other reference
 \examples{
 data(df)	
 b<-multigrps(df,"comorbid")
-print(b$table,quote=TRUE)
+print(b,quote=TRUE)
 }
 \keyword{baseline}
 \keyword{compare}

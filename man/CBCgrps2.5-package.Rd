@@ -1,4 +1,4 @@
-\name{CBCgrps2.4-package}
+\name{CBCgrps2.5-package}
 \alias{CBCgrps}
 \docType{package}
 \title{
@@ -20,6 +20,8 @@ Maintainer: Zhongheng Zhang
 }
 \references{
 Zhang Z. Univariate description and bivariate statistical inference: the first step delving into data.Ann Transl Med. 2016 Mar;4(5):91.
+
+Zhang Z, Gayle AA, Wang J, Zhang H, Cardinal-Fernasndez P. Comparing baseline characteristics between groups: an introduction to the CBCgrps package. Ann Transl Med. 2017 Dec;5(24):484. doi: 10.21037/atm.2017.09.39.
 }
 \keyword{ bivariate analysis; statisitcal description }
 \seealso{
