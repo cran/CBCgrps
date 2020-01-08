@@ -76,12 +76,13 @@ twogrps <-
                                   ")",sep = ""),
                             p = "",
                             statistic = "",stringsAsFactors = F)
-            newline <- c(paste(var,", No.(%)",sep = ""),
+            newline <- c(paste(var,", n (%)",sep = ""),
                          rep("",3),
                          ifelse(p<1*10^(-p.rd),
                                 paste("< ",1*10^(-p.rd),sep = ""),
                                 round(p,p.rd)),
-                         round(statistic,3))
+                         ifelse(is.null(statistic),"Fisher",
+                                round(statistic,3)))
             table1 <- rbind(newline,table1)
             colnames(table1)<-c("Variables",
                                 paste("Total (n = ",nrow(df),")",sep = ""),

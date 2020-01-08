@@ -58,7 +58,7 @@ a logical indicating whether to compute p-values by Monte Carlo simulation, in l
 If the fisher.test() fucntion requires more workspace, it can be defined here. The default is workspace euqals to 2e+05.
 }
 \item{ShowStatistic}{
-logic value for whether showing statistics or not. The defaule is FALSE for not showing statistics. Statistics is used for statistical inference such as F value for Chi-square test and T value for student t test.   
+logic value for whether showing statistics or not. The defaule is FALSE for not showing statistics. Statistics is used for statistical inference such as F value for Chi-square test and T value for student t test. No statistic will be shown because Fisher's exact test jumps past a test statistic and goes straight to a p-value. 
 }
 }
 \details{

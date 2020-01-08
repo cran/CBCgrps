@@ -1,11 +1,11 @@
-f9860371d68759454971cdf7ae8ae3ec *DESCRIPTION
+f24fbae5d5a3c4dbb001da906c8fab72 *DESCRIPTION
 88e34a2b8385b83b304289c940b87049 *NAMESPACE
-4b3846cd8ab12164945d825bee42f387 *R/multigrps.R
-dd0131bc8e15974546fbaade89269b77 *R/twogrps.R
+96d0d6a9c6d867996b13a12235ec2d4e *R/multigrps.R
+94fb78e27af082cbb13453680ed32eaa *R/twogrps.R
 3c07f4102b629b40a847b1e5a648b2a4 *data/df.rda
 4958f934ad22c93eeb5dc30dee2e1f07 *data/dt.rda
-5aebfb4a38b273d1c3142f83da509c20 *man/CBCgrps2.5-package.Rd
+0354dc08f2bacec6745cdbacfaa41eff *man/CBCgrps2.6-package.Rd
 318a3c4621beced68f627d1d752ab0ed *man/df.Rd
 7d8cb339fc2f78b1a068e4e9865542d3 *man/dt.Rd
-adf87cceeda89df45482f6ab5dc2632d *man/multigrps.Rd
-fe98e049311b34ba14a66b63e80dac5a *man/twogrps.Rd
+e7ad9fa9f30890da0ad6c852b343f109 *man/multigrps.Rd
+7d70e75feb62d5ccecce3ac0de5f25e6 *man/twogrps.Rd

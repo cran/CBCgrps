@@ -80,12 +80,13 @@ if(class(df[,var])=="factor"&length(levels(factor(df[,var])))>maxfactorlevels){
 	                           ")",sep = ""),stringsAsFactors = F)
  table1 <- cbind(table1,tabGrp,p=" ",statistic=" ")
  table1 <- apply(table1, 2,as.character)
- newline <- c(paste(var,", No.(%)",sep = ""),
+ newline <- c(paste(var,", n (%)",sep = ""),
               rep("",length(levels(df[,gvar]))+1),
               ifelse(p<1*10^(-p.rd),
                      paste("< ",1*10^(-p.rd),sep = ""),
                      round(p,p.rd)),
-              round(statistic,3))
+              ifelse(is.null(statistic),"Fisher",
+                     round(statistic,3)))
  table1 <- rbind(newline,table1)
  colnames(table1)<-c("Variables",
                      paste("Total (n = ",nrow(df),")",sep = ""),
