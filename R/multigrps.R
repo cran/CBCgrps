@@ -10,6 +10,13 @@ multigrps <-
            minfactorlevels=10,
            sim=FALSE,
            workspace=2e5,ShowStatistic = F){
+    #df must be a data.frame object; tibble is not allowed
+    df <- data.frame(df)
+    # NA variables in gvar must be removed
+    if(sum(is.na(df[,gvar]))!=0){
+      df <- df[!is.na(df[,gvar]),]
+      warning( "gvar contains missing values; rows with missing gvar removed" )
+    }
     ##group varibale must be a factor
     df[,gvar]<-as.factor(df[,gvar])
     #NaN is forced to be NA, NaN can cause problem
@@ -30,10 +37,11 @@ multigrps <-
     Table <- NULL
     #loop over variables
     for (var in varlist){
-      if(class(df[,var])=="factor"&length(levels(factor(df[,var])))>maxfactorlevels){
+      if((class(df[,var])=="factor"|class(df[,var])=="character")&length(levels(factor(df[,var])))>maxfactorlevels){
         print(paste("the factor variable",var,
                     "contains more than",
-                    maxfactorlevels,"levels",sep=' '))
+                    maxfactorlevels,"levels","check the class of", var,
+                    "or reset the maxfactorlevels",sep=' '))
         next 
       }else{
         if(class(df[,var])=="factor"|length(levels(factor(df[,var])))<=minfactorlevels){
@@ -80,7 +88,7 @@ multigrps <-
           rownames(tabGrp) <- rownames(table.sub)
           table1 <- data.frame("Variables" = paste("  ",levels(df[,var]),sep = ""),
                                paste(as.data.frame(tableTol)[,"Freq"]," (",
-                                     round(as.data.frame(per)[,"Freq"]*100,cat.rd),
+                                     format(round(as.data.frame(per)[,"Freq"]*100,cat.rd),nsmall = cat.rd),
                                      ")",sep = ""),stringsAsFactors = F)
           table1 <- cbind(table1,tabGrp,p=" ",statistic=" ")
           table1 <- apply(table1, 2,as.character)
@@ -103,9 +111,9 @@ multigrps <-
             tabGrp<-NULL
             nameGrp <- NULL
             for(varGrp in levels(df[,gvar])){
-              tabGrp1 <- paste(round(mean(df[df[,gvar]==varGrp,var],na.rm=T),norm.rd),
+              tabGrp1 <- paste(format(round(mean(df[df[,gvar]==varGrp,var],na.rm=T),norm.rd),nsmall = norm.rd),
                                " \U00B1 ",
-                               round(sd(df[df[,gvar]==varGrp,var],na.rm=T),norm.rd),
+                               format(round(sd(df[df[,gvar]==varGrp,var],na.rm=T),norm.rd),nsmall = norm.rd),
                                sep = "")
               nameGrp1 <- paste(varGrp," (","n = ",table(df[,gvar])[varGrp],")",sep = "")
               tabGrp <- cbind(tabGrp,tabGrp1)
@@ -116,13 +124,14 @@ multigrps <-
             p<-summary(aov(df[,var]~df[,gvar]))[[1]][1,"Pr(>F)"]
             statistic <- summary(aov(df[,var]~df[,gvar]))[[1]][1,"F value"]
             table1 <- data.frame(paste(var,", Mean"," \U00B1 ","SD",sep = ""),
-                                 paste(round(mean(df[,var],na.rm=T),norm.rd),
+                                 paste(format(round(mean(df[,var],na.rm=T),norm.rd),nsmall = norm.rd),
                                        " \U00B1 ",
-                                       round(sd(df[,var],na.rm=T),norm.rd),sep = ""),
+                                       format(round(sd(df[,var],na.rm=T),norm.rd),nsmall = norm.rd),
+                                       sep = ""),
                                  tabGrp,
                                  ifelse(p<1*10^(-p.rd),
                                         paste("< ",1*10^(-p.rd),sep = ""),
-                                        round(p,p.rd)),
+                                        format(round(p,p.rd),nsmall=p.rd)),
                                  round(statistic,3),stringsAsFactors = F)
             colnames(table1)<-c("Variables",
                                 paste("Total (n = ",nrow(df),")",sep = ""),
@@ -137,10 +146,12 @@ multigrps <-
             tabGrp<-NULL
             nameGrp <- NULL
             for(varGrp in levels(df[,gvar])){
-              tabGrp1 <- paste(round(summary(df[df[,gvar]==varGrp,var])[3],sk.rd),
+              tabGrp1 <- paste(format(round(summary(df[df[,gvar]==varGrp,var])[3],sk.rd),nsmall = sk.rd),
                                " (",
-                               round(summary(df[df[,gvar]==varGrp,var])[2],sk.rd),", ",
-                               round(summary(df[df[,gvar]==varGrp,var])[5],sk.rd),")",
+                               format(round(summary(df[df[,gvar]==varGrp,var])[2],sk.rd),nsmall = sk.rd),
+                               ", ",
+                               format(round(summary(df[df[,gvar]==varGrp,var])[5],sk.rd),nsmall = sk.rd),
+                                      ")",
                                sep = "")
               nameGrp1 <- paste(varGrp," (","n = ",table(df[,gvar])[varGrp],")",sep = "")
               tabGrp <- cbind(tabGrp,tabGrp1)
@@ -149,12 +160,13 @@ multigrps <-
             p<-kruskal.test(df[,var]~df[,gvar])$p.value
             statistic <- kruskal.test(df[,var]~df[,gvar])$statistic
             table1 <- data.frame(paste(var,", Median"," (IQR)",sep = ""),
-                                 paste(round(median,sk.rd)," (",round(IQR1,sk.rd),", ",
-                                       round(IQR3,sk.rd),")",sep = ""),
+                                 paste(format(round(median,sk.rd),nsmall = sk.rd)," (",
+                                       format(round(IQR1,sk.rd),nsmall = sk.rd),", ",
+                                       format(round(IQR3,sk.rd),nsmall = sk.rd),")",sep = ""),
                                  tabGrp,
                                  ifelse(p<1*10^(-p.rd),
                                         paste("< ",1*10^(-p.rd),sep = ""),
-                                        round(p,p.rd)),
+                                        format(round(p,p.rd),nsmall = p.rd)),
                                  round(statistic,3),stringsAsFactors = F)
             colnames(table1)<-c("Variables",
                                 paste("Total (n = ",nrow(df),")",sep = ""),

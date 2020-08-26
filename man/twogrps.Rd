@@ -11,11 +11,11 @@ twogrps(df, gvar, varlist = NULL, p.rd = 3,
     skewvar=NULL, norm.rd = 2, 
     sk.rd = 2, tabNA = "no", cat.rd = 0, pnormtest = 0.05,
     maxfactorlevels = 30, minfactorlevels = 10, sim = FALSE, 
-    workspace = 2e+05,ShowStatistic = F)
+    workspace = 2e+05,ShowStatistic = F,ExtractP = 0.05)
 }
 \arguments{
   \item{df}{
-The data frame on which statistical descroption and inference are performed.
+The data frame on which statistical descroption and inference are performed. df can be tibble, matrix or data.frame object.
 }
   \item{gvar}{
 The group variable.
@@ -58,6 +58,9 @@ If the fisher.test() fucntion requires more workspace, it can be defined here. T
 }
   \item{ShowStatistic}{
 logic value for whether showing statistics or not. The defaule is FALSE for not showing statistics. Statistics is used for statistical inference such as F value for Chi-square test and T value for student t test. No statistic will be shown because Fisher's exact test jumps past a test statistic and goes straight to a p-value. 
+}
+\item{ExtractP}{
+by default, variables with univariate p < 0.05 will be extracted for subsequent multivariable regression analysis. Users can modify the significance level by setting ExtractP = 0.25 for example.
 }
 }
 \details{
