@@ -15,7 +15,7 @@ twogrps(df, gvar, varlist = NULL, p.rd = 3,
 }
 \arguments{
   \item{df}{
-The data frame on which statistical descroption and inference are performed. df can be tibble, matrix or data.frame object.
+The data frame on which statistical descroption and inference are performed.
 }
   \item{gvar}{
 The group variable.
@@ -59,8 +59,8 @@ If the fisher.test() fucntion requires more workspace, it can be defined here. T
   \item{ShowStatistic}{
 logic value for whether showing statistics or not. The defaule is FALSE for not showing statistics. Statistics is used for statistical inference such as F value for Chi-square test and T value for student t test. No statistic will be shown because Fisher's exact test jumps past a test statistic and goes straight to a p-value. 
 }
-\item{ExtractP}{
-by default, variables with univariate p < 0.05 will be extracted for subsequent multivariable regression analysis. Users can modify the significance level by setting ExtractP = 0.25 for example.
+  \item{ExtractP}{
+Some variables with p value less than a certain threshoud can be extracted for subsequent multivariate regression modeling. The parameter specifies the threshoud of p value for a variable to be extrtacted.
 }
 }
 \details{
@@ -68,6 +68,8 @@ It is common that some categorical variables contain numeric or integer values. 
 }
 \value{
 \item{Table }{A table with string values. The mean and standard error are put in a single cell, and connected by plus and minus symbol.}
+
+\item{VarExtract }{A character vector containing variable names. These extracted variables have p value less than ExtractP in univariate analysis.}
 }
 \references{
 Zhang Z. Univariate description and bivariate statistical inference: the first step delving into data.Ann Transl Med. 2016 Mar;4(5):91. 

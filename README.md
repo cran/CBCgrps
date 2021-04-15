@@ -1,2 +1,0 @@
-# CBCgrps
- Comparing baseline characteristics

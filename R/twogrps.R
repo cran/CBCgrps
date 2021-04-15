@@ -1,30 +1,3 @@
-#' @title Comparison between two groups
-#'
-#' @description It is very usual to compare clinical data between two groups, then this function is the choice.
-#'
-#' @param df 
-#' @param gvar 
-#' @param varlist 
-#' @param p.rd
-#' @param skewvar 
-#' @param norm.rd
-#' @param sk.rd
-#' @param tabNA
-#' @param cat.rd 
-#' @param pnormtest=0.05
-#' @param maxfactorlevels
-#' @param minfactorlevels=10
-#' @param sim 
-#' @param workspace 
-#' @param ShowStatistic 
-#' @param ExtractP  
-#'
-#' @return Table
-#'
-#' @examples twogrps(dt,gvar="mort")
-#'
-#' @export twogrps
-
 twogrps <-
   function(df,gvar,varlist = NULL,
            p.rd=3, 
@@ -37,13 +10,6 @@ twogrps <-
            minfactorlevels=10,
            sim = FALSE,#to use simulated p value
            workspace=2e5,ShowStatistic = F,ExtractP = 0.05){
-    #df must be a data.frame object; tibble is not allowed
-    df <- data.frame(df)
-    # NA variables in gvar must be removed
-    if(sum(is.na(df[,gvar]))!=0){
-      df <- df[!is.na(df[,gvar]),]
-      warning( "gvar contains missing values; rows with missing gvar removed" )
-    }
     ##group varibale must be a factor
     df[,gvar]<-as.factor(df[,gvar])
     if(length(table(df[,gvar]))>2){
@@ -106,16 +72,13 @@ twogrps <-
           names(statistic) <- NULL
           table1 <- data.frame("Variable"=paste("  ",levels(df[,var]),sep = ""),
                                paste(as.data.frame(tableTol)[,"Freq"]," (",
-                                     format(round(as.data.frame(per)[,"Freq"]*100,cat.rd),
-                                            nsmall = cat.rd),
+                                     round(as.data.frame(per)[,"Freq"]*100,cat.rd),
                                      ")",sep = ""),
                                paste(as.data.frame.matrix(table.sub)[,g1]," (",
-                                     format(round(as.data.frame.matrix(per.sub)[,g1]*100,cat.rd),
-                                            nsmall = cat.rd),
+                                     round(as.data.frame.matrix(per.sub)[,g1]*100,cat.rd),
                                      ")",sep = ""),
                                paste(as.data.frame.matrix(table.sub)[,g2]," (",
-                                     format(round(as.data.frame.matrix(per.sub)[,g2]*100,cat.rd),
-                                            nsmall = cat.rd),
+                                     round(as.data.frame.matrix(per.sub)[,g2]*100,cat.rd),
                                      ")",sep = ""),
                                p = "",
                                statistic = "",stringsAsFactors = F)
@@ -123,7 +86,7 @@ twogrps <-
                        rep("",3),
                        ifelse(p<1*10^(-p.rd),
                               paste("< ",1*10^(-p.rd),sep = ""),
-                              format(round(p,p.rd),nsmall = p.rd)),
+                              round(p,p.rd)),
                        ifelse(is.null(statistic),"Fisher",
                               round(statistic,3)))
           table1 <- rbind(newline,table1)
@@ -148,15 +111,12 @@ twogrps <-
             p<-t.test(df[,var]~df[,gvar])$p.value
             statistic <- t.test(df[,var]~df[,gvar])$statistic
             table1 <- data.frame("Variable"= paste(var,", Mean"," \U00B1 ","SD",sep = ""),
-                                 paste(format(mean,nsmall = norm.rd)," \U00B1 ",
-                                       format(sd,nsmall = norm.rd),sep=""),
-                                 paste(format(mean.1,nsmall = norm.rd)," \U00B1 ",
-                                       format(sd.1,nsmall = norm.rd),sep=""),
-                                 paste(format(mean.2,nsmall = norm.rd)," \U00B1 ",
-                                       format(sd.2,nsmall = norm.rd),sep=""),
+                                 paste(mean," \U00B1 ",sd,sep=""),
+                                 paste(mean.1," \U00B1 ",sd.1,sep=""),
+                                 paste(mean.2," \U00B1 ",sd.2,sep=""),
                                  p=ifelse(p<1*10^(-p.rd),
                                           paste("< ",1*10^(-p.rd),sep = ""),
-                                          format(round(p,p.rd),nsmall = p.rd)),
+                                          round(p,p.rd)),
                                  statistic = round(statistic,3),stringsAsFactors = F)
             colnames(table1)<-c("Variables",
                                 paste("Total (n = ",nrow(df),")",sep = ""),
@@ -180,19 +140,13 @@ twogrps <-
             IQR3.2<-as.numeric(summary(df[df[,gvar]==g2,var])[5])
             p<-wilcox.test(df[,var]~df[,gvar])$p.value
             statistic <- wilcox.test(df[,var]~df[,gvar])$statistic
-            table1<-data.frame("Variable"= paste(var,", Median"," (IQR)",sep = ""),
-                               paste(format(round(median,sk.rd),nsmall = sk.rd)," (",
-                                     format(round(IQR1,sk.rd),nsmall = sk.rd),", ",
-                                     format(round(IQR3,sk.rd),nsmall = sk.rd),")",sep = ""),
-                               paste(format(round(median.1,sk.rd),nsmall = sk.rd)," (",
-                                     format(round(IQR1.1,sk.rd),nsmall = sk.rd),", ",
-                                     format(round(IQR3.1,sk.rd),nsmall = sk.rd),")",sep = ""),
-                               paste(format(round(median.2,sk.rd),nsmall = sk.rd)," (",
-                                     format(round(IQR1.2,sk.rd),nsmall = sk.rd),", ",
-                                     format(round(IQR3.2,sk.rd),nsmall = sk.rd),")",sep = ""),
+            table1<-data.frame("Variable"= paste(var,", Median"," (Q1,Q3)",sep = ""),
+                               paste(round(median,sk.rd)," (",round(IQR1,sk.rd),", ",round(IQR3,sk.rd),")",sep = ""),
+                               paste(round(median.1,sk.rd)," (",round(IQR1.1,sk.rd),", ",round(IQR3.1,sk.rd),")",sep = ""),
+                               paste(round(median.2,sk.rd)," (",round(IQR1.2,sk.rd),", ",round(IQR3.2,sk.rd),")",sep = ""),
                                p=ifelse(p<1*10^(-p.rd),
                                         paste("< ",1*10^(-p.rd),sep = ""),
-                                        format(round(p,p.rd),nsmall = p.rd)),
+                                        round(p,p.rd)),
                                statistic = round(statistic,3),stringsAsFactors = F)
             colnames(table1)<-c("Variables",
                                 paste("Total (n = ",nrow(df),")",sep = ""),
